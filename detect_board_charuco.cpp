@@ -82,8 +82,8 @@ static bool readCameraParameters(string filename, Mat &camMatrix, Mat &distCoeff
     FileStorage fs(filename, FileStorage::READ);
     if(!fs.isOpened())
         return false;
-    fs["camera_matrix"] >> camMatrix;
-    fs["distortion_coefficients"] >> distCoeffs;
+    fs["r_intrin"] >> camMatrix;
+    fs["r_coeffs"] >> distCoeffs;
     return true;
 }
 
