@@ -141,6 +141,13 @@ int main(int argc, char *argv[]) {
         }
     }
     wMc_file.close();
+    // mm to m if necessary
+    if (abs(wMc(0, 3)) > 1 || abs(wMc(1,3)) > 1 || abs(wMc(2, 3)) > 1) {
+      wMc(0, 3) /= 1000;
+      wMc(1, 3) /= 1000;
+      wMc(2, 3) /= 1000;
+    }
+
     cout << "wMc:\n" << wMc << endl;
 
     CommandLineParser parser(argc, argv, keys);
@@ -297,15 +304,15 @@ int main(int argc, char *argv[]) {
                     cMo(i, j) = rmat.at<double>(i, j);
                 }
             }
-            cMo(0, 3) = tvec(0) * 1000;
-            cMo(1, 3) = tvec(1) * 1000;
-            cMo(2, 3) = tvec(2) * 1000;
+            cMo(0, 3) = tvec(0);
+            cMo(1, 3) = tvec(1);
+            cMo(2, 3) = tvec(2);
             cout << "cMo:" << cMo << endl;
             Eigen::Matrix4f wMo = wMc * cMo;
             cout << "wMo:" << wMo << endl;
             vector<float> pose(6, 0);
             getEulerAngles(wMo, pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
-            cout << "target pose: X: " << pose[0] << "mm Y: " << pose[1] << "mm Z: " << pose[2] << "mm r: "
+            cout << "target pose: X: " << pose[0] * 1000 << "mm Y: " << pose[1] * 1000 << "mm Z: " << pose[2] * 1000 << "mm r: "
                  << pose[3]*180/M_PI << "° p: " << pose[4]*180/M_PI << "° y: " << pose[5]*180/M_PI << "°" << endl;
         }
     }
