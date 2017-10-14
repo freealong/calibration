@@ -30,3 +30,6 @@ target_link_libraries(create_marker ${OpenCV_LIBRARIES})
 
 add_executable(detect_markers detect_markers.cpp)
 target_link_libraries(detect_markers ${OpenCV_LIBRARIES})
+
+add_executable(watermaker watermaker.cpp)
+target_link_libraries(watermaker ${OpenCV_LIBRARIES})
