@@ -7,45 +7,40 @@
 
 #include <iostream>
 #include <fstream>
+#include <eigen3/Eigen/Eigen>
+#include <visp3/core/vpRotationMatrix.h>
 
 using namespace std;
-//#include <eigen3/Eigen/Eigen>
-//using namespace Eigen;
-
-//void EigenMatrix2VPMatrix(const Matrix4d &tf1, vpHomogeneousMatrix &tf2) {
-//  for (int i = 0; i < 4; ++i) {
-//    for (int j = 0; j < 4; ++j) {
-//      tf2[i][j] = tf1(i, j);
-//    }
-//  }
-//}
-//
-//void VPMatrix2EigenMatrix(const vpHomogeneousMatrix &tf1, Matrix4d &tf2) {
-//  for (int i = 0; i < 4; ++i) {
-//    for (int j = 0; j < 4; ++j) {
-//      tf2(i, j) = tf1[i][j];
-//    }
-//  }
-//}
 
 vpRotationMatrix RPY2Rotation(double r, double p, double y) {
   vpRotationMatrix R, P, Y;
   R.eye();
-  R[0][0] = cos(r);
-  R[0][1] = -sin(r);
-  R[1][0] = sin(r);
   R[1][1] = cos(r);
+  R[1][2] = -sin(r);
+  R[2][1] = sin(r);
+  R[2][2] = cos(r);
   P.eye();
   P[0][0] = cos(p);
   P[0][2] = sin(p);
   P[2][0] = -sin(p);
   P[2][2] = cos(p);
   Y.eye();
+  Y[0][0] = cos(y);
+  Y[0][1] = -sin(y);
+  Y[1][0] = sin(y);
   Y[1][1] = cos(y);
-  Y[1][2] = -sin(y);
-  Y[2][1] = sin(y);
-  Y[2][2] = cos(y);
-  return R * P * Y;
+  return Y * P * R;
+}
+
+// rpy in XYZ
+void get_tf(const Eigen::Matrix4f t, float &x, float &y, float &z, float &roll, float &pitch, float &yaw)
+{
+  x = t (0, 3);
+  y = t (1, 3);
+  z = t (2, 3);
+  roll = atan2 (t (2, 1), t (2, 2));
+  pitch = asin (-t (2, 0));
+  yaw = atan2 (t (1, 0), t (0, 0));
 }
 
 inline void print_matrix(const string &msg, const vpHomogeneousMatrix &m) {

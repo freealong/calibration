@@ -47,17 +47,6 @@ the use of this software, even if advised of the possibility of such damage.
 using namespace std;
 using namespace cv;
 
-// rpy in ZYX
-void getEulerAngles (const Eigen::Matrix4f t, float &x, float &y, float &z, float &roll, float &pitch, float &yaw)
-{
-    x = t (0, 3);
-    y = t (1, 3);
-    z = t (2, 3);
-    yaw = atan2 (t (2, 1), t (2, 2));
-    pitch = asin (-t (2, 0));
-    roll = atan2 (t (1, 0), t (0, 0));
-}
-
 namespace {
 const char* about = "Pose estimation using a ChArUco board";
 const char* keys  =
@@ -88,6 +77,16 @@ static bool readCameraParameters(string filename, Mat &camMatrix, Mat &distCoeff
     return true;
 }
 
+// rpy in XYZ
+void get_tf(const Eigen::Matrix4f t, float &x, float &y, float &z, float &roll, float &pitch, float &yaw)
+{
+    x = t (0, 3);
+    y = t (1, 3);
+    z = t (2, 3);
+    roll = atan2 (t (2, 1), t (2, 2));
+    pitch = asin (-t (2, 0));
+    yaw = atan2 (t (1, 0), t (0, 0));
+}
 
 /**
  */
@@ -311,7 +310,7 @@ int main(int argc, char *argv[]) {
             Eigen::Matrix4f wMo = wMc * cMo;
             cout << "wMo:" << wMo << endl;
             vector<float> pose(6, 0);
-            getEulerAngles(wMo, pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
+            get_tf(wMo, pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
             cout << "target pose: X: " << pose[0] * 1000 << "mm Y: " << pose[1] * 1000 << "mm Z: " << pose[2] * 1000 << "mm r: "
                  << pose[3]*180/M_PI << "° p: " << pose[4]*180/M_PI << "° y: " << pose[5]*180/M_PI << "°" << endl;
         }
